@@ -38,6 +38,7 @@ todoApp.directive('datepciker', function() {
       element.Zebra_DatePicker({
         direction: 1,
         format: 'Y-m-d',
+        show_icon: false,
         onSelect: function(customFormat, defaultFormat, dateObject) {
           scope.$apply(function() {
             ngModel.$setViewValue(customFormat);
@@ -95,6 +96,47 @@ todoApp.controller('TodosController', function($scope, $location, TodoApiClient)
     return;
   }
   
+  $scope.editMode = [];
+  
+  $scope.editTodo = function(index) {
+    $scope.editMode[index] = true;
+  };
+  
+  $scope.saveTodo = function(index) {
+    var todo = $scope.todos[index];
+    TodoApiClient.updateTodo(todo.id, todo).then(function(data) {
+      $scope.editMode[index] = false;
+    }, function(data) {
+      alert(data.message);
+    });
+  };
+  
+  $scope.deleteTodo = function(index) {
+    var todo = $scope.todos[index];
+    TodoApiClient.deleteTodo(todo.id).then(function(data) {
+      $scope.todos.splice(index, 1);
+    }, function(data) {
+      alert('There was a problem in deleting the record: ' + data.message);
+    });
+  };
+  
+  $scope.setDone = function(index) {
+    var todo = $scope.todos[index];
+    TodoApiClient.updateTodo(todo.id, todo).then(function(data) {
+    
+    }, function(data) {
+    
+    });
+  };
+  
+  $scope.logout = function() {
+    TodoApiClient.logout().then(function() {
+      $location.path('/login');
+    }, function(data) {
+      alert('Failed to logout: ' + data.message); 
+    });
+  }
+  
   $scope.today = new Date();
   
   $scope.newTodo = {};
@@ -103,6 +145,7 @@ todoApp.controller('TodosController', function($scope, $location, TodoApiClient)
     TodoApiClient.createTodo($scope.newTodo).then(function(data) {
       refreshTodoList();
       $scope.newTodo = {};
+      $scope.newTodo_errors = null;
     }, function(data) {
       $scope.newTodo_errors = data.errors;
     });

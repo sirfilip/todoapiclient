@@ -9,40 +9,60 @@
     </ul>
     <div class="form-group">
         <label for="new_todo_priority">Priority</label>
-        <input type="number" ng-model="newTodo.priority" class="form-control"  id="new_todo_priority" min="0" max="10"/> 
+        <input type="number" value="0" ng-model="newTodo.priority" class="form-control"  id="new_todo_priority" min="0" max="10"/> 
     </div>
     <div class="form-group">
         <label for="new_todo_due_date">Due Date</label>
         <input datepciker type="text" ng-model="newTodo.due_date" class="form-control"  id="new_todo_due_date" /> 
     </div>
-    {{ newTodo }}
     <div class="form-group">
         <label for="new_todo_description">Description</label>
         <textarea ng-model="newTodo.description" class="form-control"  id="new_todo_description"></textarea> 
     </div>
     <button class="btn btn-success" type="submit">Add Todo</button>
+    {{ newTodo }}
 </form>
 
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Todo List</th>
-      <th>
-      </th>
+      <th>#</th>
+      <th>Finished?</th>
+      <th>Description</th>
+      <th>Due Date</th>
+      <th>Priority</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
     <tr ng-repeat="todo in todos">
       <td>
-        <p ng-hide="edit_mode[$index]">
-            <input type="checkbox" ng-model="todo.is_finished" ng-change="saveTodo($index)" />
+        {{ $index + 1 }}
+      </td>
+      <td>
+        <input type="checkbox" ng-model="todo.done" ng-change="setDone($index)" />
+      </td>
+      <td>
+        <p ng-hide="editMode[$index]">
             {{ todo.description }}
         </p>
-        <input type="text" ng-show="edit_mode[$index]" ng-model="todo.description" class="form-control" />
+        <input type="text" ng-show="editMode[$index]" ng-model="todo.description" class="form-control" />
+      </td>
+      <td>
+        <span ng-hide="editMode[$index]">
+            {{ todo.due_date }}
+        </span>
+        <input datepciker type="text" ng-show="editMode[$index]" ng-model="todo.due_date" class="form-control" />
+      </td>
+      <td>
+        <span ng-hide="editMode[$index]">
+            {{ todo.priority }}
+        </span>
+        <input type="number" ng-show="editMode[$index]" ng-model="todo.priority" class="form-control" min="0" max="10" />
       </td>
       <td class="text-right">
-        <button ng-click="editTodo($index)" class="btn btn-primary btn-sm" ng-hide="edit_mode[$index]">Edit</button>
-        <button ng-click="saveTodo($index)" class="btn btn-primary btn-sm" ng-show="edit_mode[$index]">Save</button>
+        <button ng-click="editTodo($index)" class="btn btn-primary btn-sm" ng-hide="editMode[$index]">Edit</button>
+        <button ng-click="saveTodo($index)" class="btn btn-primary btn-sm" ng-show="editMode[$index]">Save</button>
         <button ng-click="deleteTodo($index)" class="btn btn-danger btn-sm">Delete</button>
       </td>
     </tr>

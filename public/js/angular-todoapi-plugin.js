@@ -36,7 +36,7 @@ TodoApiClientPlugin.factory('TodoApiClient', function($http, $q) {
         });
       return deferred.promise;
     },
-    logout: function(success, error) {
+    logout: function() {
       var deferred = $q.defer();
       $http.delete(url_to('/session?token=' + _token))
         .success(function(data) {
@@ -93,6 +93,30 @@ TodoApiClientPlugin.factory('TodoApiClient', function($http, $q) {
           }
         });
       
+      return deferred.promise;
+    },
+    updateTodo: function(id, todo) {
+      var deferred = $q.defer();
+      $http.put(url_to('/todos/' + id + '?token=' + _token), todo)
+        .success(function(data) {
+          if (is_successfull(data.status)) {
+            deferred.resolve(data);
+          } else {
+            deferred.reject(data);
+          }
+        });
+      return deferred.promise;
+    },
+    deleteTodo: function(id) {
+      var deferred = $q.defer();
+      $http.delete(url_to('/todos/' + id + '?token=' + _token))
+        .success(function(data) {
+          if (is_successfull(data.status)) {
+            deferred.resolve(data);
+          } else {
+            deferred.reject(data);
+          }
+        });
       return deferred.promise;
     }
   }

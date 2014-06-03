@@ -4,8 +4,8 @@
 
 <form ng-submit="createTodo()" role="form">
     <h3 class="bg-success">Create Todo</h3>
-    <ul ng-show="newTodo.errors" class="list-unstyled error">
-        <li ng-repeat="(field, error) in newTodo.errors">{{field}} {{ error }}</li>
+    <ul ng-show="newTodo_errors" class="list-unstyled error">
+        <li ng-repeat="(field, error) in newTodo_errors">{{field}} {{ error[0] }}</li>
     </ul>
     <div class="form-group">
         <label for="new_todo_priority">Priority</label>

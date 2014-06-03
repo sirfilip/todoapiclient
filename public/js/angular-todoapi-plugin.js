@@ -82,6 +82,18 @@ TodoApiClientPlugin.factory('TodoApiClient', function($http, $q) {
       
       return deferred.promise;
     },
-  
+    createTodo: function(todoObject) {
+      var deferred = $q.defer();
+      $http.post(url_to('/todos?token=' + _token), todoObject)
+        .success(function(data) {
+          if (is_successfull(data.status)) {
+            deferred.resolve(data);
+          } else {
+            deferred.reject(data);
+          }
+        });
+      
+      return deferred.promise;
+    }
   }
 });

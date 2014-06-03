@@ -97,13 +97,14 @@ todoApp.controller('TodosController', function($scope, $location, TodoApiClient)
   
   $scope.today = new Date();
   
-  $scope.newTodo = {due_date: '2014-06-29'};
+  $scope.newTodo = {};
 
   $scope.createTodo = function() {
     TodoApiClient.createTodo($scope.newTodo).then(function(data) {
-
+      refreshTodoList();
+      $scope.newTodo = {};
     }, function(data) {
-
+      $scope.newTodo_errors = data.errors;
     });
   };
   

@@ -1,0 +1,10 @@
+<form class="form-signin" role="form" ng-submit="signup()">
+  <h2 class="form-signin-heading">Please sign up</h2>
+  <ul class="list-unstyled error">
+    <li ng-repeat="(field, error) in errors">{{field}} {{error[0]}}</li>
+  </ul>
+  <input type="text" name="email" ng-model="email" class="form-control" placeholder="Email address" required autofocus>
+  <input type="password" name="password" ng-model="password" class="form-control" placeholder="Password" required>
+<!--  <input type="password" name="password_confirmation" ng-model="userdata.password_confirmation" class="form-control" placeholder="Confirm" required>-->
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+</form>

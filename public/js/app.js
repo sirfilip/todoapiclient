@@ -25,7 +25,7 @@ todoApp.config(['$routeProvider', function($routeProvider) {
 todoApp.directive('datepciker', function() {
 
   return {
-    restrict: 'EA',
+    restrict: 'A',
     scope: {},
     require: '?ngModel',
     link: function(scope, element, attrs, ngModel) {
@@ -50,6 +50,35 @@ todoApp.directive('datepciker', function() {
           });
         }
       });
+    }
+  }
+});
+
+todoApp.directive('pagination', function() {
+
+  return {
+    restrict: 'A',
+    require: '^ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      function render() {
+        var ui = ['<ul class="pagination">'];
+        var offset = 0;
+        var totalPages = Math.ceil(ngModel.$viewValue / attrs.limit);
+        for (var i=0; i<totalPages; i++) {
+          offset = attrs.limit * i; 
+          ui.push(['<li><a href="#" data-page="',offset,'">',i+1,'</a></li>'].join(''))
+        }
+        element.html(ui.join(''));
+        element.find('a').bind('click', function() {
+          var $this = $(this);
+          scope.$apply(function() {
+            scope.offset = $this.attr('data-page') * 1;
+            scope.refreshTodoList();
+          });
+          return false;
+        });
+      }
+      ngModel.$render = render;
     }
   }
 
@@ -97,6 +126,35 @@ todoApp.controller('TodosController', function($scope, $location, TodoApiClient)
   }
   
   $scope.editMode = [];
+  $scope.orderBy = 'id';
+  $scope.today = new Date();
+  $scope.newTodo = {};
+  $scope.limit = 10;
+  $scope.offset = 0;
+  $scope.totalRecords = 0;
+  
+  $scope.refreshTodoList = function() {
+    TodoApiClient.fetchTodos({
+      order: $scope.orderBy,
+      limit: $scope.limit,
+      offset: $scope.offset
+    }).then(function(data) {
+      $scope.todos = data.todos;
+      $scope.totalRecords = data._meta.total;
+    }, function(data) {
+      console.log(data);
+    });
+  };
+  
+  $scope.createTodo = function() {
+    TodoApiClient.createTodo($scope.newTodo).then(function(data) {
+      $scope.refreshTodoList();
+      $scope.newTodo = {};
+      $scope.newTodo_errors = null;
+    }, function(data) {
+      $scope.newTodo_errors = data.errors;
+    });
+  };
   
   $scope.editTodo = function(index) {
     $scope.editMode[index] = true;
@@ -135,31 +193,7 @@ todoApp.controller('TodosController', function($scope, $location, TodoApiClient)
     }, function(data) {
       alert('Failed to logout: ' + data.message); 
     });
-  }
-  
-  $scope.today = new Date();
-  
-  $scope.newTodo = {};
-
-  $scope.createTodo = function() {
-    TodoApiClient.createTodo($scope.newTodo).then(function(data) {
-      refreshTodoList();
-      $scope.newTodo = {};
-      $scope.newTodo_errors = null;
-    }, function(data) {
-      $scope.newTodo_errors = data.errors;
-    });
   };
   
-  
-  
-  var refreshTodoList = function() {
-    TodoApiClient.fetchTodos().then(function(data) {
-      $scope.todos = data.todos;
-    }, function(data) {
-      console.log(data);
-    });
-  };
-  
-  refreshTodoList();
+  $scope.refreshTodoList();
 });

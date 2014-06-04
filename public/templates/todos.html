@@ -9,7 +9,7 @@
     </ul>
     <div class="form-group">
         <label for="new_todo_priority">Priority</label>
-        <input type="number" value="0" ng-model="newTodo.priority" class="form-control"  id="new_todo_priority" min="0" max="10"/> 
+        <input type="number" value="0" ng-model="newTodo.priority" class="form-control"  id="new_todo_priority" min="0" max="10" required/> 
     </div>
     <div class="form-group">
         <label for="new_todo_due_date">Due Date</label>
@@ -20,8 +20,10 @@
         <textarea ng-model="newTodo.description" class="form-control"  id="new_todo_description"></textarea> 
     </div>
     <button class="btn btn-success" type="submit">Add Todo</button>
-    {{ newTodo }}
+    <!-- {{ newTodo }} -->
 </form>
+
+<h3 class="bg-success">Todos</h3>
 
 <table class="table table-striped">
   <thead>
@@ -31,13 +33,19 @@
       <th>Description</th>
       <th>Due Date</th>
       <th>Priority</th>
-      <th></th>
+      <th class="text-right">
+        <select ng-model="orderBy" ng-change="refreshTodoList()">
+          <option value="id" ng-selected="selected">Default</option>
+          <option value="priority">Priority</option>
+          <option value="due_date">Due Date</option>
+        </select>  
+      </th>
     </tr>
   </thead>
   <tbody>
     <tr ng-repeat="todo in todos">
       <td>
-        {{ $index + 1 }}
+        {{ offset + $index + 1 }}
       </td>
       <td>
         <input type="checkbox" ng-model="todo.done" ng-change="setDone($index)" />
@@ -58,7 +66,7 @@
         <span ng-hide="editMode[$index]">
             {{ todo.priority }}
         </span>
-        <input type="number" ng-show="editMode[$index]" ng-model="todo.priority" class="form-control" min="0" max="10" />
+        <input type="number" ng-show="editMode[$index]" ng-model="todo.priority" class="form-control" min="0" max="10" required/>
       </td>
       <td class="text-right">
         <button ng-click="editTodo($index)" class="btn btn-primary btn-sm" ng-hide="editMode[$index]">Edit</button>
@@ -68,3 +76,5 @@
     </tr>
   </tbody>
 </table>
+
+<div pagination ng-model="totalRecords" limit="{{limit}}" offset="{{offset}}" paginate="refreshTodoList"></div>
